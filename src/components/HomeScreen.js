@@ -85,14 +85,14 @@ export default function HomeScreen({ navigation }) {
       <StatusBar style="light" />
 
       <LinearGradient
-        colors={['#ffab40', '#fb3415', '#a92419']}
+        colors={["#ffab40", "#fb3415", "#a92419"]}
         start={[0, 0]}
         end={[1, 1]}
         style={styles.header}
       >
         <View style={styles.logoContainer}>
           <Image
-            source={require('../../assets/images/paw-print.png')}
+            source={require("../../assets/images/paw-print.png")}
             style={styles.logo}
           />
         </View>
@@ -102,14 +102,14 @@ export default function HomeScreen({ navigation }) {
         </View>
 
         <TouchableOpacity style={styles.profilePictureContainer}>
-          <Image 
+          <Image
             source={{ uri: userData.profilePicture }}
             style={styles.profilePicture}
           />
         </TouchableOpacity>
       </LinearGradient>
 
-      <ScrollView 
+      <ScrollView
         style={styles.content}
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
@@ -122,7 +122,7 @@ export default function HomeScreen({ navigation }) {
               onPress={button.onPress}
               activeOpacity={0.8}
             >
-              <Image 
+              <Image
                 source={{ uri: button.image }}
                 style={styles.buttonImage}
               />
@@ -134,34 +134,53 @@ export default function HomeScreen({ navigation }) {
 
       <View style={styles.bottomNavigation}>
         <TouchableOpacity style={styles.navButton}>
-          <LinearGradient
-            colors={['#ffab40', '#fb3415', '#a92419']}
+          {/*<LinearGradient
+            colors={["#ffab40", "#fb3415", "#a92419"]}
             start={[0, 0]}
             end={[1, 1]}
             style={styles.selectedNavIcon}
           >
-            <Text style={styles.navIconSelected}>🏠</Text>
-          </LinearGradient>
-          <Text style={styles.navLabel}>Home</Text>
+            <Image
+              source={require("../../assets/images/heart.png")}
+              style={styles.navIcon}
+            />
+          </LinearGradient>*/}
+          <Image
+              source={require("../../assets/images/heart.png")}
+              style={styles.navIcon}
+            />
+          <Text style={styles.navLabel}>Procurar</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.navButton}>
-          <Text style={styles.navIcon}>🐾</Text>
+          <Image
+            source={require("../../assets/images/pata-btn.png")}
+            style={styles.navIcon}
+          />
           <Text style={styles.navLabel}>Pets</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.navButton}>
-          <Text style={styles.navIcon}>❤️</Text>
-          <Text style={styles.navLabel}>Favoritos</Text>
+          <Image
+            source={require("../../assets/images/house.png")}
+            style={styles.navIcon}
+          />
+          <Text style={styles.navLabel}>Home</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.navButton}>
-          <Text style={styles.navIcon}>💬</Text>
+          <Image
+            source={require("../../assets/images/message-circle.png")}
+            style={styles.navIcon}
+          />
           <Text style={styles.navLabel}>Mensagens</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.navButton}>
-          <Text style={styles.navIcon}>⚙️</Text>
+          <Image
+            source={require("../../assets/images/cog.png")}
+            style={styles.navIcon}
+          />
           <Text style={styles.navLabel}>Config</Text>
         </TouchableOpacity>
       </View>
