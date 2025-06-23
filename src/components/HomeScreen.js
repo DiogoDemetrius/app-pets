@@ -139,7 +139,10 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.navLabel}>Home</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.navButton}>
+        <TouchableOpacity 
+          style={styles.navButton}
+          onPress={() => navigation.navigate('Messages')}
+        >
           <Image
             source={require("../../assets/images/message-circle.png")}
             style={styles.navIcon}
