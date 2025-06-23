@@ -7,6 +7,9 @@ import HomeScreen from './src/components/HomeScreen';
 import ConfigScreen from './src/components/ConfigScreen';
 import MessagesScreen from './src/components/MessagesScreen';
 import ChatScreen from './src/components/ChatScreen';
+import AddPetScreen from './src/components/AddPetScreen';
+import MyPetsScreen from './src/components/MyPetsScreen';
+import PetDetailsScreen from './src/components/PetDetailsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +23,9 @@ export default function App() {
         <Stack.Screen name="Config" component={ConfigScreen} />
         <Stack.Screen name="Messages" component={MessagesScreen} />
         <Stack.Screen name="Chat" component={ChatScreen} />
+        <Stack.Screen name="AddPet" component={AddPetScreen} />
+        <Stack.Screen name="MyPets" component={MyPetsScreen} />
+        <Stack.Screen name="PetDetails" component={PetDetailsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

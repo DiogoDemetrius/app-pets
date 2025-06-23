@@ -123,7 +123,10 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.navLabel}>Procurar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.navButton}>
+        <TouchableOpacity
+          style={styles.navButton}
+          onPress={() => navigation.navigate('MyPets')}
+        >
           <Image
             source={require("../../assets/images/pata-btn.png")}
             style={styles.navIcon}
