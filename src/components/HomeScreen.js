@@ -36,40 +36,22 @@ export default function HomeScreen({ navigation }) {
   const contentButtons = [
     {
       id: 1,
-      title: 'Conteúdo 1',
+      title: 'Loja',
       image: 'https://via.placeholder.com/150x120/ffab40/ffffff?text=1',
       onPress: () => navigation.navigate('Content1')
     },
     {
       id: 2,
-      title: 'Conteúdo 2',
+      title: 'Moda PET',
       image: 'https://via.placeholder.com/150x120/fb3415/ffffff?text=2',
       onPress: () => navigation.navigate('Content2')
     },
     {
       id: 3,
-      title: 'Conteúdo 3',
+      title: 'Cuidados',
       image: 'https://via.placeholder.com/150x120/a92419/ffffff?text=3',
       onPress: () => navigation.navigate('Content3')
-    },
-    {
-      id: 4,
-      title: 'Conteúdo 4',
-      image: 'https://via.placeholder.com/150x120/ffab40/ffffff?text=4',
-      onPress: () => navigation.navigate('Content4')
-    },
-    {
-      id: 5,
-      title: 'Conteúdo 5',
-      image: 'https://via.placeholder.com/150x120/fb3415/ffffff?text=5',
-      onPress: () => navigation.navigate('Content5')
-    },
-    {
-      id: 6,
-      title: 'Conteúdo 6',
-      image: 'https://via.placeholder.com/150x120/a92419/ffffff?text=6',
-      onPress: () => navigation.navigate('Content6')
-    },
+    }
   ];
 
   if (!userData) {
