@@ -13,6 +13,7 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import { styles } from './LoginScreen.styles';
+import api from '../api/axiosInstance';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -21,22 +22,27 @@ export default function LoginScreen({ navigation }) {
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert('Erro', 'Por favor, preencha todos os campos');
+      Alert.alert("Erro", "Por favor, preencha todos os campos");
       return;
     }
 
     setLoading(true);
-    
-    // Simulação de login - substitua pela sua lógica de autenticação
+
     try {
-      // Aqui você faria a chamada para sua API de login
-      await new Promise(resolve => setTimeout(resolve, 1500)); // Simula delay da API
-      
-      Alert.alert('Sucesso', 'Login realizado com sucesso!');
-      // Navegar para a tela de Home
-      navigation.navigate('Home');
+      const response = await api.post("/login", {
+        email,
+        password,
+      });
+
+      const { user, token } = response.data;
+
+      // Exemplo: salvar o token no AsyncStorage (opcional)
+      // await AsyncStorage.setItem('token', token);
+
+      navigation.navigate("Home");
     } catch (error) {
-      Alert.alert('Erro', 'Falha no login. Tente novamente.');
+      console.error(error);
+      Alert.alert("Erro", error.response?.data?.error || "Erro ao fazer login");
     } finally {
       setLoading(false);
     }
