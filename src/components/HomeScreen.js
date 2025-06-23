@@ -93,8 +93,6 @@ export default function HomeScreen({ navigation }) {
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.sectionTitle}>Conteúdos Disponíveis</Text>
-        
         <View style={styles.buttonsGrid}>
           {contentButtons.map((button) => (
             <TouchableOpacity
@@ -116,23 +114,35 @@ export default function HomeScreen({ navigation }) {
       {/* Barra de navegação inferior */}
       <View style={styles.bottomNavigation}>
         <TouchableOpacity style={styles.navButton}>
-          <Text style={styles.navIcon}>🏠</Text>
+          <LinearGradient
+            colors={['#ffab40', '#fb3415', '#a92419']}
+            start={[0, 0]}
+            end={[1, 1]}
+            style={styles.selectedNavIcon}
+          >
+            <Text style={styles.navIconSelected}>🏠</Text>
+          </LinearGradient>
           <Text style={styles.navLabel}>Home</Text>
         </TouchableOpacity>
         
         <TouchableOpacity style={styles.navButton}>
-          <Text style={styles.navIcon}>📚</Text>
-          <Text style={styles.navLabel}>Conteúdos</Text>
+          <Text style={styles.navIcon}>🐾</Text>
+          <Text style={styles.navLabel}>Pets</Text>
         </TouchableOpacity>
         
         <TouchableOpacity style={styles.navButton}>
-          <Text style={styles.navIcon}>⭐</Text>
+          <Text style={styles.navIcon}>❤️</Text>
           <Text style={styles.navLabel}>Favoritos</Text>
         </TouchableOpacity>
         
         <TouchableOpacity style={styles.navButton}>
-          <Text style={styles.navIcon}>👤</Text>
-          <Text style={styles.navLabel}>Perfil</Text>
+          <Text style={styles.navIcon}>💬</Text>
+          <Text style={styles.navLabel}>Mensagens</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity style={styles.navButton}>
+          <Text style={styles.navIcon}>⚙️</Text>
+          <Text style={styles.navLabel}>Config</Text>
         </TouchableOpacity>
       </View>
     </View>

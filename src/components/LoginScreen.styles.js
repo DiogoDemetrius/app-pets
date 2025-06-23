@@ -63,7 +63,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#F8F9FA',
     borderWidth: 1,
     borderColor: '#E0E0E0',
-    borderRadius: 30,
+    borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 16,
     fontSize: 16,
@@ -86,7 +86,7 @@ export const styles = StyleSheet.create({
     marginTop: -8,
   },
   loginButton: {
-    borderRadius: 30,
+    borderRadius: 12,
     paddingVertical: 16,
     alignItems: 'center',
     justifyContent: 'center',
@@ -128,7 +128,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
     borderColor: '#E0E0E0',
-    borderRadius: 30,
+    borderRadius: 12,
     paddingVertical: 16,
     alignItems: 'center',
     marginBottom: 12,
@@ -155,12 +155,12 @@ export const styles = StyleSheet.create({
   footerText: {
     color: '#666666',
     fontSize: 16,
-    marginBottom: 30,
+    paddingBottom: 40,
   },
   signUpText: {
     color: '#fb3415',
     fontSize: 16,
     fontWeight: '600',
-    marginBottom: 30
+    paddingBottom: 40,
   },
 });

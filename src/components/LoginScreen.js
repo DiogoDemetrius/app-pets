@@ -8,7 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Image
+  Image,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -33,7 +33,8 @@ export default function LoginScreen({ navigation }) {
       await new Promise(resolve => setTimeout(resolve, 1500)); // Simula delay da API
       
       Alert.alert('Sucesso', 'Login realizado com sucesso!');
-      // Navegue para a próxima tela aqui
+      // Navegar para a tela de Home
+      navigation.navigate('Home');
     } catch (error) {
       Alert.alert('Erro', 'Falha no login. Tente novamente.');
     } finally {
@@ -50,25 +51,26 @@ export default function LoginScreen({ navigation }) {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <StatusBar style="dark" />
-      <ScrollView
-        contentContainerStyle={styles.scrollContainer}
-        keyboardShouldPersistTaps="handled"
+    <View style={{ flex: 1 }}>
+      <KeyboardAvoidingView 
+        style={styles.container} 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <View style={styles.header}>
+        <StatusBar style="dark" />
+        <ScrollView 
+          contentContainerStyle={styles.scrollContainer}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.header}>
           <LinearGradient
-            colors={["#ffab40", "#fb3415", "#a92419"]}
+            colors={['#ffab40', '#fb3415', '#a92419']}
             start={[0, 0]}
             end={[1, 1]}
             style={styles.logoContainer}
           >
             <Image
-              source={require("../../assets/images/paw-print.png")}
-              style={{ width: 32, height: 32 }}
+              source={require('../../assets/images/paw-print.png')}
+              style={styles.logoText}
             />
           </LinearGradient>
           <Text style={styles.title}>Bem-vindo!</Text>
@@ -105,20 +107,20 @@ export default function LoginScreen({ navigation }) {
             <Text style={styles.forgotPassword}>Esqueceu a senha?</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
+          <TouchableOpacity 
             style={[loading && styles.loginButtonDisabled]}
             onPress={handleLogin}
             disabled={loading}
             activeOpacity={0.8}
           >
             <LinearGradient
-              colors={["#ffab40", "#fb3415", "#a92419"]}
+              colors={['#ffab40', '#fb3415', '#a92419']}
               start={[0, 0]}
               end={[1, 1]}
               style={styles.loginButton}
             >
               <Text style={styles.loginButtonText}>
-                {loading ? "Entrando..." : "Entrar"}
+                {loading ? 'Entrando...' : 'Entrar'}
               </Text>
             </LinearGradient>
           </TouchableOpacity>
@@ -142,5 +144,6 @@ export default function LoginScreen({ navigation }) {
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
+    </View>
   );
 }
