@@ -14,6 +14,7 @@ import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import { styles } from './LoginScreen.styles';
 import api from '../api/axiosInstance';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -36,9 +37,8 @@ export default function LoginScreen({ navigation }) {
 
       const { user, token } = response.data;
 
-      // Exemplo: salvar o token no AsyncStorage (opcional)
-      // await AsyncStorage.setItem('token', token);
-
+      await AsyncStorage.setItem("token", token);
+      await AsyncStorage.setItem("user", JSON.stringify(user));
       navigation.navigate("Home");
     } catch (error) {
       console.error(error);

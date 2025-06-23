@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -9,20 +9,35 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import { styles } from './HomeScreen.styles';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function HomeScreen({ navigation }) {
-  // Dados do usuário - substitua pelos dados reais
-  const userData = {
-    name: 'João Silva',
-    profilePicture: 'https://via.placeholder.com/60x60/cccccc/ffffff?text=JS' // Placeholder - substitua pela imagem real
-  };
+  const [userData, setUserData] = useState(null);
 
-  // Dados dos botões de conteúdo - você pode adicionar mais itens aqui
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const userString = await AsyncStorage.getItem('user');
+        if (userString) {
+          const user = JSON.parse(userString);
+          setUserData({
+            name: user.nome,
+            profilePicture: user.fotoPerfil || 'https://via.placeholder.com/60x60/cccccc/ffffff?text=U',
+          });
+        }
+      } catch (error) {
+        console.error('Erro ao carregar dados do usuário:', error);
+      }
+    };
+
+    loadUser();
+  }, []);
+
   const contentButtons = [
     {
       id: 1,
       title: 'Conteúdo 1',
-      image: 'https://via.placeholder.com/150x120/ffab40/ffffff?text=1', // Substitua pelas suas imagens
+      image: 'https://via.placeholder.com/150x120/ffab40/ffffff?text=1',
       onPress: () => navigation.navigate('Content1')
     },
     {
@@ -57,28 +72,35 @@ export default function HomeScreen({ navigation }) {
     },
   ];
 
+  if (!userData) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <Text>Carregando usuário...</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
-      
-      {/* Header com gradiente */}
+
       <LinearGradient
         colors={['#ffab40', '#fb3415', '#a92419']}
         start={[0, 0]}
         end={[1, 1]}
         style={styles.header}
       >
-        {/* Logo da patinha no canto esquerdo */}
         <View style={styles.logoContainer}>
-          <Text style={styles.logoText}>🐾</Text>
+          <Image
+            source={require('../../assets/images/paw-print.png')}
+            style={styles.logo}
+          />
         </View>
 
-        {/* Nome do usuário centralizado */}
         <View style={styles.userNameContainer}>
           <Text style={styles.userName}>{userData.name}</Text>
         </View>
 
-        {/* Foto do usuário no canto direito */}
         <TouchableOpacity style={styles.profilePictureContainer}>
           <Image 
             source={{ uri: userData.profilePicture }}
@@ -87,7 +109,6 @@ export default function HomeScreen({ navigation }) {
         </TouchableOpacity>
       </LinearGradient>
 
-      {/* Conteúdo principal */}
       <ScrollView 
         style={styles.content}
         contentContainerStyle={styles.contentContainer}
@@ -111,7 +132,6 @@ export default function HomeScreen({ navigation }) {
         </View>
       </ScrollView>
 
-      {/* Barra de navegação inferior */}
       <View style={styles.bottomNavigation}>
         <TouchableOpacity style={styles.navButton}>
           <LinearGradient
@@ -124,22 +144,22 @@ export default function HomeScreen({ navigation }) {
           </LinearGradient>
           <Text style={styles.navLabel}>Home</Text>
         </TouchableOpacity>
-        
+
         <TouchableOpacity style={styles.navButton}>
           <Text style={styles.navIcon}>🐾</Text>
           <Text style={styles.navLabel}>Pets</Text>
         </TouchableOpacity>
-        
+
         <TouchableOpacity style={styles.navButton}>
           <Text style={styles.navIcon}>❤️</Text>
           <Text style={styles.navLabel}>Favoritos</Text>
         </TouchableOpacity>
-        
+
         <TouchableOpacity style={styles.navButton}>
           <Text style={styles.navIcon}>💬</Text>
           <Text style={styles.navLabel}>Mensagens</Text>
         </TouchableOpacity>
-        
+
         <TouchableOpacity style={styles.navButton}>
           <Text style={styles.navIcon}>⚙️</Text>
           <Text style={styles.navLabel}>Config</Text>
