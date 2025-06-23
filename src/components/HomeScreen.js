@@ -116,17 +116,6 @@ export default function HomeScreen({ navigation }) {
 
       <View style={styles.bottomNavigation}>
         <TouchableOpacity style={styles.navButton}>
-          {/*<LinearGradient
-            colors={["#ffab40", "#fb3415", "#a92419"]}
-            start={[0, 0]}
-            end={[1, 1]}
-            style={styles.selectedNavIcon}
-          >
-            <Image
-              source={require("../../assets/images/heart.png")}
-              style={styles.navIcon}
-            />
-          </LinearGradient>*/}
           <Image
               source={require("../../assets/images/heart.png")}
               style={styles.navIcon}
@@ -158,7 +147,10 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.navLabel}>Mensagens</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.navButton}>
+        <TouchableOpacity 
+          style={styles.navButton}
+          onPress={() => navigation.navigate('Config')}
+        >
           <Image
             source={require("../../assets/images/cog.png")}
             style={styles.navIcon}
