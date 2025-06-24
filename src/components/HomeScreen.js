@@ -115,7 +115,10 @@ export default function HomeScreen({ navigation }) {
       </ScrollView>
 
       <View style={styles.bottomNavigation}>
-        <TouchableOpacity style={styles.navButton}>
+        <TouchableOpacity
+          style={styles.navButton}
+          onPress={() => navigation.navigate('SelectPet')}
+        >
           <Image
               source={require("../../assets/images/heart.png")}
               style={styles.navIcon}

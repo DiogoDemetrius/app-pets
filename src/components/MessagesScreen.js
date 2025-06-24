@@ -72,7 +72,7 @@ export default function MessagesScreen({ navigation }) {
         end={[1, 1]}
         style={styles.header}
       >
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
@@ -101,12 +101,14 @@ export default function MessagesScreen({ navigation }) {
             <TouchableOpacity
               key={conversation.id}
               style={styles.conversationItem}
-              onPress={() => navigation.navigate('Chat', { 
-                userId: conversation.id,
-                userName: conversation.name,
-                userProfilePicture: conversation.profilePicture,
-                isOnline: conversation.isOnline
-              })}
+              onPress={() =>
+                navigation.navigate("Chat", {
+                  userId: conversation.id,
+                  userName: conversation.name,
+                  userProfilePicture: conversation.profilePicture,
+                  isOnline: conversation.isOnline,
+                })
+              }
               activeOpacity={0.8}
             >
               <View style={styles.conversationLeft}>
@@ -119,9 +121,11 @@ export default function MessagesScreen({ navigation }) {
                     <View style={styles.onlineIndicator} />
                   )}
                 </View>
-                
+
                 <View style={styles.conversationTextContainer}>
-                  <Text style={styles.conversationName}>{conversation.name}</Text>
+                  <Text style={styles.conversationName}>
+                    {conversation.name}
+                  </Text>
                   <Text style={styles.lastMessage} numberOfLines={1}>
                     {conversation.lastMessage}
                   </Text>
@@ -132,7 +136,9 @@ export default function MessagesScreen({ navigation }) {
                 <Text style={styles.timestamp}>{conversation.timestamp}</Text>
                 {conversation.unreadCount > 0 && (
                   <View style={styles.unreadBadge}>
-                    <Text style={styles.unreadCount}>{conversation.unreadCount}</Text>
+                    <Text style={styles.unreadCount}>
+                      {conversation.unreadCount}
+                    </Text>
                   </View>
                 )}
               </View>
@@ -144,14 +150,18 @@ export default function MessagesScreen({ navigation }) {
           <View style={styles.emptyState}>
             <Text style={styles.emptyStateText}>Nenhuma conversa ainda</Text>
             <Text style={styles.emptyStateSubtext}>
-              Quando você começar a conversar com outros usuários, elas aparecerão aqui.
+              Quando você começar a conversar com outros usuários, elas
+              aparecerão aqui.
             </Text>
           </View>
         )}
       </ScrollView>
 
       <View style={styles.bottomNavigation}>
-        <TouchableOpacity style={styles.navButton}>
+        <TouchableOpacity
+          style={styles.navButton}
+          onPress={() => navigation.navigate("SelectPet")}
+        >
           <Image
             source={require("../../assets/images/heart.png")}
             style={styles.navIcon}
@@ -159,7 +169,10 @@ export default function MessagesScreen({ navigation }) {
           <Text style={styles.navLabel}>Procurar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.navButton}>
+        <TouchableOpacity
+          style={styles.navButton}
+          onPress={() => navigation.navigate("MyPets")}
+        >
           <Image
             source={require("../../assets/images/pata-btn.png")}
             style={styles.navIcon}
@@ -167,9 +180,9 @@ export default function MessagesScreen({ navigation }) {
           <Text style={styles.navLabel}>Pets</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.navButton}
-          onPress={() => navigation.navigate('Home')}
+          onPress={() => navigation.navigate("Home")}
         >
           <Image
             source={require("../../assets/images/house.png")}
@@ -178,24 +191,20 @@ export default function MessagesScreen({ navigation }) {
           <Text style={styles.navLabel}>Home</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.navButton}>
-          <LinearGradient
-            colors={["#ffab40", "#fb3415", "#a92419"]}
-            start={[0, 0]}
-            end={[1, 1]}
-            style={styles.selectedNavIcon}
-          >
-            <Image
-              source={require("../../assets/images/message-circle.png")}
-              style={styles.navIconSelected}
-            />
-          </LinearGradient>
+        <TouchableOpacity 
+          style={styles.navButton}
+          onPress={() => navigation.navigate('Messages')}
+        >
+          <Image
+            source={require("../../assets/images/message-circle.png")}
+            style={styles.navIconSelected}
+          />
           <Text style={styles.navLabel}>Mensagens</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.navButton}
-          onPress={() => navigation.navigate('Config')}
+          onPress={() => navigation.navigate("Config")}
         >
           <Image
             source={require("../../assets/images/cog.png")}

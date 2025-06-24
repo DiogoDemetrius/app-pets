@@ -131,7 +131,7 @@ export default function ConfigScreen({ navigation }) {
         end={[1, 1]}
         style={styles.header}
       >
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
@@ -178,8 +178,8 @@ export default function ConfigScreen({ navigation }) {
               <View style={styles.configItemRight}>
                 {option.hasSwitch ? (
                   <Switch
-                    trackColor={{ false: '#E0E0E0', true: '#ffab40' }}
-                    thumbColor={isDarkMode ? '#fb3415' : '#f4f3f4'}
+                    trackColor={{ false: "#E0E0E0", true: "#ffab40" }}
+                    thumbColor={isDarkMode ? "#fb3415" : "#f4f3f4"}
                     ios_backgroundColor="#E0E0E0"
                     onValueChange={handleThemeToggle}
                     value={isDarkMode}
@@ -204,7 +204,10 @@ export default function ConfigScreen({ navigation }) {
       </ScrollView>
 
       <View style={styles.bottomNavigation}>
-        <TouchableOpacity style={styles.navButton}>
+        <TouchableOpacity
+          style={styles.navButton}
+          onPress={() => navigation.navigate("SelectPet")}
+        >
           <Image
             source={require("../../assets/images/heart.png")}
             style={styles.navIcon}
@@ -212,7 +215,10 @@ export default function ConfigScreen({ navigation }) {
           <Text style={styles.navLabel}>Procurar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.navButton}>
+        <TouchableOpacity
+          style={styles.navButton}
+          onPress={() => navigation.navigate("MyPets")}
+        >
           <Image
             source={require("../../assets/images/pata-btn.png")}
             style={styles.navIcon}
@@ -220,7 +226,10 @@ export default function ConfigScreen({ navigation }) {
           <Text style={styles.navLabel}>Pets</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.navButton}>
+        <TouchableOpacity
+          style={styles.navButton}
+          onPress={() => navigation.navigate("Home")}
+        >
           <Image
             source={require("../../assets/images/house.png")}
             style={styles.navIcon}
@@ -228,7 +237,10 @@ export default function ConfigScreen({ navigation }) {
           <Text style={styles.navLabel}>Home</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.navButton}>
+        <TouchableOpacity
+          style={styles.navButton}
+          onPress={() => navigation.navigate("Messages")}
+        >
           <Image
             source={require("../../assets/images/message-circle.png")}
             style={styles.navIcon}
