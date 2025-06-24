@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -12,6 +12,8 @@ import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import { styles } from './PetMatchingScreen.styles';
+import api from '../api/axiosInstance';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
@@ -22,81 +24,64 @@ export default function PetMatchingScreen({ navigation, route }) {
   const [showPedigreeOnly, setShowPedigreeOnly] = useState(false);
   const [colorFilter, setColorFilter] = useState('todas');
   const [showFilters, setShowFilters] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // Animação para o swipe
-  const translateX = new Animated.Value(0);
-  const translateY = new Animated.Value(0);
-  const rotate = new Animated.Value(0);
+  const translateX = useRef(new Animated.Value(0)).current;
+  const translateY = useRef(new Animated.Value(0)).current;
+  const rotate = useRef(new Animated.Value(0)).current;
 
-  // Mock data - substitua pela sua API
-  const mockPets = [
-    {
-      id: 1,
-      nome: 'Luna',
-      raca: 'Golden Retriever',
-      idade: 3,
-      sexo: 'Fêmea',
-      cor: 'Dourado',
-      pedigree: true,
-      foto: 'https://via.placeholder.com/300x400/ffab40/ffffff?text=Luna',
-      regiao: 'São Paulo - SP',
-      dono: 'Maria Silva',
-      descricao: 'Cadela muito carinhosa e brincalhona, adora crianças e outros pets.',
-    },
-    {
-      id: 2,
-      nome: 'Thor',
-      raca: 'Pastor Alemão',
-      idade: 4,
-      sexo: 'Macho',
-      cor: 'Preto e marrom',
-      pedigree: false,
-      foto: 'https://via.placeholder.com/300x400/333333/ffffff?text=Thor',
-      regiao: 'Rio de Janeiro - RJ',
-      dono: 'João Santos',
-      descricao: 'Cão protetor e leal, ideal para quem busca um companheiro fiel.',
-    },
-    {
-      id: 3,
-      nome: 'Bella',
-      raca: 'Labrador',
-      idade: 2,
-      sexo: 'Fêmea',
-      cor: 'Chocolate',
-      pedigree: true,
-      foto: 'https://via.placeholder.com/300x400/8B4513/ffffff?text=Bella',
-      regiao: 'Belo Horizonte - MG',
-      dono: 'Ana Costa',
-      descricao: 'Muito ativa e inteligente, perfeita para atividades ao ar livre.',
-    },
-  ];
+  // Cores disponíveis para filtro
+  const colors = ['todas', 'preto', 'branco', 'dourado', 'marrom', 'chocolate'];
 
+  // Buscar pets compatíveis do backend
   useEffect(() => {
+    async function loadAvailablePets() {
+      setLoading(true);
+      try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await api.post(
+          '/match/pets',
+          {
+            raca: selectedPet.raca,
+            sexo: selectedPet.sexo,
+            cor: selectedPet.cor,
+            pedigree: selectedPet.pedigree,
+            displasia_coxofemural: selectedPet.displasia_coxofemural,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setAvailablePets(response.data);
+        setCurrentPetIndex(0);
+      } catch (error) {
+        Alert.alert('Erro', 'Não foi possível buscar pets compatíveis.');
+        setAvailablePets([]);
+      }
+      setLoading(false);
+    }
     loadAvailablePets();
-  }, [showPedigreeOnly, colorFilter]);
+  }, [selectedPet]);
 
-  const loadAvailablePets = () => {
-    let filteredPets = mockPets;
-
-    if (showPedigreeOnly) {
-      filteredPets = filteredPets.filter(pet => pet.pedigree);
-    }
-
-    if (colorFilter !== 'todas') {
-      filteredPets = filteredPets.filter(pet => 
-        pet.cor.toLowerCase().includes(colorFilter.toLowerCase())
-      );
-    }
-
-    setAvailablePets(filteredPets);
+  // Filtros locais
+  useEffect(() => {
     setCurrentPetIndex(0);
-  };
+  }, [showPedigreeOnly, colorFilter, availablePets.length]);
 
+  const filteredPets = availablePets.filter(pet => {
+    if (showPedigreeOnly && !pet.pedigree) return false;
+    if (colorFilter !== 'todas' && !pet.cor.toLowerCase().includes(colorFilter.toLowerCase())) return false;
+    return true;
+  });
+
+  // Swipe handler
   const handleSwipeGesture = ({ nativeEvent }) => {
     if (nativeEvent.state === State.ACTIVE) {
       translateX.setValue(nativeEvent.translationX);
       translateY.setValue(nativeEvent.translationY);
-      
       const rotation = nativeEvent.translationX / screenWidth * 30;
       rotate.setValue(rotation);
     }
@@ -105,13 +90,10 @@ export default function PetMatchingScreen({ navigation, route }) {
       const threshold = screenWidth * 0.25;
 
       if (nativeEvent.translationX > threshold) {
-        // Swipe direita - curtir
         handleLike();
       } else if (nativeEvent.translationX < -threshold) {
-        // Swipe esquerda - rejeitar
         handleReject();
       } else {
-        // Voltar para o centro
         Animated.parallel([
           Animated.spring(translateX, { toValue: 0, useNativeDriver: true }),
           Animated.spring(translateY, { toValue: 0, useNativeDriver: true }),
@@ -122,17 +104,16 @@ export default function PetMatchingScreen({ navigation, route }) {
   };
 
   const handleReject = () => {
-    // Animação para sair pela esquerda
     Animated.parallel([
-      Animated.timing(translateX, { 
-        toValue: -screenWidth * 1.5, 
-        duration: 300, 
-        useNativeDriver: true 
+      Animated.timing(translateX, {
+        toValue: -screenWidth * 1.5,
+        duration: 300,
+        useNativeDriver: true,
       }),
-      Animated.timing(rotate, { 
-        toValue: -30, 
-        duration: 300, 
-        useNativeDriver: true 
+      Animated.timing(rotate, {
+        toValue: -30,
+        duration: 300,
+        useNativeDriver: true,
       }),
     ]).start(() => {
       nextPet();
@@ -140,8 +121,7 @@ export default function PetMatchingScreen({ navigation, route }) {
   };
 
   const handleLike = () => {
-    // Navegar para conversa
-    const currentPet = availablePets[currentPetIndex];
+    const currentPet = filteredPets[currentPetIndex];
     navigation.navigate('Chat', {
       selectedPet: selectedPet,
       matchedPet: currentPet,
@@ -149,12 +129,11 @@ export default function PetMatchingScreen({ navigation, route }) {
   };
 
   const nextPet = () => {
-    // Reset das animações
     translateX.setValue(0);
     translateY.setValue(0);
     rotate.setValue(0);
 
-    if (currentPetIndex < availablePets.length - 1) {
+    if (currentPetIndex < filteredPets.length - 1) {
       setCurrentPetIndex(currentPetIndex + 1);
     } else {
       Alert.alert('Fim', 'Não há mais pets para mostrar!');
@@ -165,9 +144,7 @@ export default function PetMatchingScreen({ navigation, route }) {
     setShowPedigreeOnly(!showPedigreeOnly);
   };
 
-  const colors = ['todas', 'preto', 'branco', 'dourado', 'marrom', 'chocolate'];
-
-  if (availablePets.length === 0) {
+  if (loading) {
     return (
       <View style={styles.container}>
         <StatusBar style="light" />
@@ -177,14 +154,37 @@ export default function PetMatchingScreen({ navigation, route }) {
           end={[1, 1]}
           style={styles.header}
         >
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.backButton}
             onPress={() => navigation.goBack()}
           >
             <Text style={styles.backButtonText}>←</Text>
           </TouchableOpacity>
         </LinearGradient>
-        
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyTitle}>Buscando pets compatíveis...</Text>
+        </View>
+      </View>
+    );
+  }
+
+  if (filteredPets.length === 0) {
+    return (
+      <View style={styles.container}>
+        <StatusBar style="light" />
+        <LinearGradient
+          colors={["#ffab40", "#fb3415", "#a92419"]}
+          start={[0, 0]}
+          end={[1, 1]}
+          style={styles.header}
+        >
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
+            <Text style={styles.backButtonText}>←</Text>
+          </TouchableOpacity>
+        </LinearGradient>
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyTitle}>Nenhum pet encontrado</Text>
           <Text style={styles.emptyMessage}>
@@ -195,7 +195,7 @@ export default function PetMatchingScreen({ navigation, route }) {
     );
   }
 
-  const currentPet = availablePets[currentPetIndex];
+  const currentPet = filteredPets[currentPetIndex];
 
   return (
     <View style={styles.container}>
@@ -208,31 +208,33 @@ export default function PetMatchingScreen({ navigation, route }) {
         end={[1, 1]}
         style={styles.header}
       >
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
           <Text style={styles.backButtonText}>←</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.filterButton}
           onPress={() => setShowFilters(!showFilters)}
         >
           <Text style={styles.filterButtonText}>🎨</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[
             styles.pedigreeModeButton,
-            showPedigreeOnly && styles.pedigreeModeButtonActive
+            showPedigreeOnly && styles.pedigreeModeButtonActive,
           ]}
           onPress={togglePedigreeMode}
         >
-          <Text style={[
-            styles.pedigreeModeText,
-            showPedigreeOnly && styles.pedigreeModeTextActive
-          ]}>
+          <Text
+            style={[
+              styles.pedigreeModeText,
+              showPedigreeOnly && styles.pedigreeModeTextActive,
+            ]}
+          >
             Pedigree Mode
           </Text>
         </TouchableOpacity>
@@ -248,14 +250,16 @@ export default function PetMatchingScreen({ navigation, route }) {
                 key={color}
                 style={[
                   styles.colorFilter,
-                  colorFilter === color && styles.colorFilterActive
+                  colorFilter === color && styles.colorFilterActive,
                 ]}
                 onPress={() => setColorFilter(color)}
               >
-                <Text style={[
-                  styles.colorFilterText,
-                  colorFilter === color && styles.colorFilterTextActive
-                ]}>
+                <Text
+                  style={[
+                    styles.colorFilterText,
+                    colorFilter === color && styles.colorFilterTextActive,
+                  ]}
+                >
                   {color.charAt(0).toUpperCase() + color.slice(1)}
                 </Text>
               </TouchableOpacity>
@@ -274,19 +278,21 @@ export default function PetMatchingScreen({ navigation, route }) {
                 transform: [
                   { translateX: translateX },
                   { translateY: translateY },
-                  { rotate: rotate.interpolate({
-                    inputRange: [-30, 0, 30],
-                    outputRange: ['-30deg', '0deg', '30deg'],
-                  })},
+                  {
+                    rotate: rotate.interpolate({
+                      inputRange: [-30, 0, 30],
+                      outputRange: ['-30deg', '0deg', '30deg'],
+                    }),
+                  },
                 ],
               },
             ]}
           >
             <Image
-              source={{ uri: currentPet.foto }}
+              source={{ uri: currentPet.foto || 'https://via.placeholder.com/300x400?text=Sem+Foto' }}
               style={styles.petImage}
             />
-            
+
             <LinearGradient
               colors={['transparent', 'rgba(0,0,0,0.8)']}
               style={styles.petInfoOverlay}
@@ -300,7 +306,7 @@ export default function PetMatchingScreen({ navigation, route }) {
                     </View>
                   )}
                 </View>
-                
+
                 <Text style={styles.petBreed}>{currentPet.raca}</Text>
                 <Text style={styles.petDetails}>
                   {currentPet.idade} {currentPet.idade === 1 ? 'ano' : 'anos'} • {currentPet.sexo} • {currentPet.cor}
@@ -316,14 +322,14 @@ export default function PetMatchingScreen({ navigation, route }) {
 
       {/* Botões de Ação */}
       <View style={styles.actionsContainer}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.rejectButton}
           onPress={handleReject}
         >
           <Text style={styles.rejectButtonText}>✕</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.chatButton}
           onPress={handleLike}
         >
@@ -334,7 +340,7 @@ export default function PetMatchingScreen({ navigation, route }) {
       {/* Indicador de Progresso */}
       <View style={styles.progressContainer}>
         <Text style={styles.progressText}>
-          {currentPetIndex + 1} de {availablePets.length}
+          {currentPetIndex + 1} de {filteredPets.length}
         </Text>
       </View>
     </View>

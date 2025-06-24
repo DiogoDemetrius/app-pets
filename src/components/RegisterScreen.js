@@ -13,6 +13,7 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import { styles } from './RegisterScreen.styles';
+import api from '../api/axiosInstance';
 
 export default function RegisterScreen({ navigation }) {
   const [name, setName] = useState('');
@@ -24,7 +25,7 @@ export default function RegisterScreen({ navigation }) {
 
   const handleRegister = async () => {
     if (!name || !email || !password || !confirmPassword) {
-      Alert.alert('Erro', 'Por favor, preencha todos os campos');
+      Alert.alert('Erro', 'Preencha todos os campos obrigatórios');
       return;
     }
 
@@ -44,15 +45,16 @@ export default function RegisterScreen({ navigation }) {
     }
 
     setLoading(true);
-    
-    // Simulação de registro - substitua pela sua lógica de autenticação
+
     try {
-      // Aqui você faria a chamada para sua API de registro
-      await new Promise(resolve => setTimeout(resolve, 1500)); // Simula delay da API
-      
+      await api.post('/usuarios', {
+        nome: name,
+        email,
+        password,
+      });
+
       Alert.alert('Sucesso', 'Conta criada com sucesso!');
-      // Navegue para a tela de login ou dashboard
-      // navigation.navigate('LoginScreen');
+      navigation.navigate('Login');
     } catch (error) {
       Alert.alert('Erro', 'Falha no registro. Tente novamente.');
     } finally {
@@ -107,10 +109,9 @@ export default function RegisterScreen({ navigation }) {
 
         <View style={styles.form}>
           <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Nome Completo</Text>
             <TextInput
               style={styles.input}
-              placeholder="Digite seu nome completo"
+              placeholder="Digite seu nome"
               placeholderTextColor="#999999"
               value={name}
               onChangeText={setName}
@@ -120,7 +121,6 @@ export default function RegisterScreen({ navigation }) {
           </View>
 
           <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Email</Text>
             <TextInput
               style={styles.input}
               placeholder="Digite seu email"
@@ -134,7 +134,6 @@ export default function RegisterScreen({ navigation }) {
           </View>
 
           <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Senha</Text>
             <TextInput
               style={styles.input}
               placeholder="Digite sua senha (mín. 6 caracteres)"
@@ -147,7 +146,6 @@ export default function RegisterScreen({ navigation }) {
           </View>
 
           <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Confirmar Senha</Text>
             <TextInput
               style={styles.input}
               placeholder="Digite novamente sua senha"
