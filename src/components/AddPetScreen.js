@@ -15,6 +15,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from '../api/axiosInstance';
 import { styles } from './AddPetScreen.styles';
 
 const regioesDF = [
@@ -98,18 +99,18 @@ export default function AddPetScreen({ navigation }) {
     setLoading(true);
 
     try {
-      // Recuperar dados do usuário
+      // Recuperar dados do usuário e token
       const userString = await AsyncStorage.getItem('user');
-      if (!userString) {
+      const token = await AsyncStorage.getItem('token');
+      if (!userString || !token) {
         Alert.alert('Erro', 'Usuário não encontrado');
+        setLoading(false);
         return;
       }
-
       const userData = JSON.parse(userString);
-      
-      // Criar novo pet
+
+      // Montar objeto do pet para API
       const newPet = {
-        _id: Date.now().toString(), // ID temporário para o frontend
         nome: petData.nome.trim(),
         raca: petData.raca.trim(),
         idade: parseInt(petData.idade),
@@ -121,19 +122,26 @@ export default function AddPetScreen({ navigation }) {
         pedigree: petData.pedigree,
         regiao: petData.regiao,
         foto: petData.foto,
+        id_usuario: userData._id,
       };
 
-      // Adicionar o pet à lista de pets do usuário
-      if (!userData.pets) {
-        userData.pets = [];
-      }
-      userData.pets.push(newPet);
+      // Enviar para o backend
+      await api.post('/pets', newPet, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-      // Salvar os dados atualizados
-      await AsyncStorage.setItem('user', JSON.stringify(userData));
+      // Buscar usuário atualizado na rota /me
+      const userResponse = await api.get('/me', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const updatedUser = userResponse.data.user;
 
-      // Aqui você também deveria fazer uma chamada para a API para salvar no backend
-      // await api.addPet(userData._id, newPet);
+      // Atualizar o AsyncStorage
+      await AsyncStorage.setItem('user', JSON.stringify(updatedUser));
 
       Alert.alert(
         'Sucesso',
